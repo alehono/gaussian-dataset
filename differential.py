@@ -31,4 +31,4 @@ def difference(foldername, filename, outputfilename):
     subs = np.array(subs)
     output_filename = f"{foldername}/{outputfilename}.txt"
     np.savetxt(output_filename, np.column_stack(subs), header='Wavenumber\t' + '\t'.join(sub_names), comments='', delimiter='\t')
-    print(f"Saved data for {foldername}")
+    print(f"Saved data for differencial of {filename} spectra in {foldername}")
