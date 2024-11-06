@@ -19,6 +19,7 @@ def run_simulation(foldername, filename, params_filename):
         
         # Get the parameters for the current spectrum
         initial_params = parameters[i]
+        temperature = temperatures[i] # A temperatura da amostra que foi medido o espectro
         
         print(f"Optimizing Parameters for {temperatures[i]}")
         # Fit spectrum
@@ -59,6 +60,13 @@ def run_simulation(foldername, filename, params_filename):
         except Exception as e:
             print(f"Erro inesperado: {e}")
 
+        "SALVAR AS COVARIÂNCIAS EM UM ARQUIVO COM A PRIMEIRA COLUNA DA PRIMEIRA LINHA VAZIA, A PRIMEIRA LINHA COM O NOME DOS PARÂMETROS E A PRIMEIRA COLUNA TAMBÉM"
+        "NOME DO ARQUIVO: covariance_value_simulated_spectrum_at_{}"
+        "SALVAR AS MÉTRICAS ESTATÍSTICAS EM UM ARRAY E ANEXAR EM UM 'ARRAY' COM LINHAS RELACIONADAS ÀS"
+        "TEMPERATURAS DA MEDIDA REFERENTE AO CONJUNTO DE DADOS USADO PARA O AJUSTE DA CURVA SIMULADA - PRECISA CRIAR O ARRAY INICIAL ANTES"
+        "SALVAR UM ARQUIVO EM QUE OS DADOS ESTATÍSTICOS DO ARRAY ANTERIOR ESTÃO EM CADA LINHA COM A TEMPERATURA COMO PRIMEIRA COLUNA, R^2 COMO SEGUNDA E"
+        "DESVIO PADRÃO COMO TERCEIRA EM QUE A PRIMEIRA LINHA SEJA UM CABEÇALHO COM O NOME DAS COLUNAS (VER ONDE ESSA PARTE DO CÓDIGO SE ENCAIXA)"
+
         # Append spectrum in the dataset
         all_simulated_spectra.append(normalized_spectrum)
         
@@ -76,12 +84,10 @@ def run_simulation(foldername, filename, params_filename):
 
         # Save gaussians
         gaussians = np.array(gaussians)
-        temperature = temperatures[i]
         output_filename = f"{foldername}/simulated_spectrum_{temperature}.txt"
         np.savetxt(output_filename, np.column_stack(gaussians), header='Wavenumber\tMinor Gaussian\tMajor Gaussian', comments='', delimiter='\t')
 
         # Save optimized parameters
-        temperature = temperatures[i]
         params_filename = f"{foldername}/optimized_params_{temperature}.txt"
         np.savetxt(params_filename, optimized_params.reshape(1, -1), header='Amplitude1\tCenter1\tFWHM1\tAmplitude2\tCenter2\tFWHM2', comments='', delimiter='\t')
         print(f"Finished simulation for {temperatures[i]}")
