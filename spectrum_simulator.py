@@ -24,7 +24,8 @@ def fit_spectrum(x, y, initial_guess):
     except RuntimeError as e:
         print("Error in fitting:", e)
         optimized_params = initial_guess  # Use initial guess if fitting fails
-    return optimized_params
+        covariance = ["none"]
+    return optimized_params, covariance
 
 def simulate_spectra_conditional(foldername, filename):
     # Definindo caminho dos arquivos
