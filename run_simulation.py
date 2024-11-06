@@ -22,7 +22,7 @@ def run_simulation(foldername, filename, params_filename):
         
         print(f"Optimizing Parameters for {temperatures[i]}")
         # Fit spectrum
-        optimized_params = fit_spectrum(x, y, initial_params)
+        optimized_params, covariance = fit_spectrum(x, y, initial_params)
         # optimized_params[1] = initial_params[1]
         print(f"Finished optimized parameters for {temperatures[i]}")
         
@@ -35,8 +35,31 @@ def run_simulation(foldername, filename, params_filename):
         
         # Normalizando o espectro
         normalized_spectrum = simulated_spectrum / peak
+        
+        # Tentar fazer métricas estatísticas:
+        try:
+            if len(y) != len(normalized_spectrum): # Confirmar que y_real e y_simulado
+                raise ValueError("Os conjuntos de dados não têm o mesmo tamanho!")
+            else:
+                print("Os conjuntos de dados têm o mesmo tamanho.")
 
-        #append spectrum in the dataset
+                # Calcular os valores de  R^2
+                ss_res = np.sum((y - normalized_spectrum)**2) # soma do quadrado dos resíduos
+                y_mean = np.mean(y) # Achar y_médio da curva real
+                ss_tot = np.sum((y - y_mean)**2) # soma dos quadrados totais
+                r_sq = 1 - ss_res/ss_tot # Achar R^2        
+                
+                # Calcular os valores de  desvio padrão
+                n = len(y) # achar tamanho do conjunto de dados (n)
+                std = np.sqrt(ss_res/n) # cálculo desvio padrão
+
+        # Excessões:
+        except ValueError as e:
+            print(f"Erro: {e}")
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
+
+        # Append spectrum in the dataset
         all_simulated_spectra.append(normalized_spectrum)
         
         # Calculating gaussians with optimized parameters
