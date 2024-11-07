@@ -64,7 +64,7 @@ def run_simulation(foldername, filename, params_filename):
         "NOME DO ARQUIVO: covariance_value_simulated_spectrum_at_{}"
         headcol = np.array(["amplitude1", "peak center1", "fwhm1", "amplitude2", "peak center2", "fwhm2"])
         output_filename = f"{foldername}/covariance_value_simulated_spectrum_at_{temperature}.txt"
-        np.savetxt(output_filename, np.column_stack([headcol, covariance]), header='amplitude1\tpeak center1\tfwhm1\tamplitude2\tpeak center2\tfwhm2', comments='', delimiter='\t')
+        np.savetxt(output_filename, np.column_stack((headcol, covariance)), header='\tamplitude1\tpeak center1\tfwhm1\tamplitude2\tpeak center2\tfwhm2', comments='', fmt='%s', delimiter='\t')
 
         "SALVAR AS MÉTRICAS ESTATÍSTICAS EM UM ARRAY E ANEXAR EM UM 'ARRAY' COM LINHAS RELACIONADAS ÀS"
         "TEMPERATURAS DA MEDIDA REFERENTE AO CONJUNTO DE DADOS USADO PARA O AJUSTE DA CURVA SIMULADA - PRECISA CRIAR O ARRAY INICIAL ANTES"
