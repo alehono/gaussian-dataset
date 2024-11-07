@@ -44,8 +44,6 @@ def run_simulation(foldername, filename, params_filename):
             if len(y) != len(normalized_spectrum): # Confirmar que y_real e y_simulado
                 raise ValueError("Os conjuntos de dados não têm o mesmo tamanho!")
             else:
-                print("Os conjuntos de dados têm o mesmo tamanho.")
-
                 # Calcular os valores de  R^2
                 ss_res = np.sum((y - normalized_spectrum)**2) # soma do quadrado dos resíduos
                 y_mean = np.mean(y) # Achar y_médio da curva real
@@ -82,7 +80,7 @@ def run_simulation(foldername, filename, params_filename):
         # Save gaussians
         gaussians = np.array(gaussians)
         output_filename = f"{foldername}/simulated_spectrum_{temperature}.txt"
-        np.savetxt(output_filename, np.column_stack(gaussians), header='Wavenumber\tMinor Gaussian\tMajor Gaussian', comments='', delimiter='\t')
+        np.savetxt(output_filename, np.column_stack(gaussians), header='Wavenumber\tMajor Gaussian\tMinor Gaussian', comments='', delimiter='\t')
 
         # Salvar os dados de covariância de cada simulação
         headcol = np.array(["amplitude1", "peak center1", "fwhm1", "amplitude2", "peak center2", "fwhm2"]) # Coluna de parâmetros
@@ -96,8 +94,6 @@ def run_simulation(foldername, filename, params_filename):
 
     # Salvando os dados estatísticos de todas as simulações
     stat_met = np.array([temperatures, r_2list, std_list]) # Create an array of statistical metrics and the temperature 
-    "SALVAR UM ARQUIVO EM QUE OS DADOS ESTATÍSTICOS DO ARRAY ANTERIOR ESTÃO EM CADA LINHA COM A TEMPERATURA COMO PRIMEIRA COLUNA, R^2 COMO SEGUNDA E"
-    "DESVIO PADRÃO COMO TERCEIRA EM QUE A PRIMEIRA LINHA SEJA UM CABEÇALHO COM O NOME DAS COLUNAS (VER ONDE ESSA PARTE DO CÓDIGO SE ENCAIXA)"
     output_filename = f"{foldername}/all_simulated_spectra_statiscal_metrics.txt"
     np.savetxt(output_filename, np.column_stack(stat_met), header='TEMPERATURE OF THE RUN\tR^2\tSTANDARD DEVIATION', comments='', fmt='%s', delimiter='\t')
 
