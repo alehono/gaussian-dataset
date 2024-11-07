@@ -1,0 +1,1 @@
+amplitude1	peak center1	fwhm1	amplitude2	peak center2	fwhm2
