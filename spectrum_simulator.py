@@ -24,7 +24,7 @@ def fit_spectrum(x, y, initial_guess):
     except RuntimeError as e:
         print("Error in fitting:", e)
         optimized_params = initial_guess  # Use initial guess if fitting fails
-        covariance = ["none"]
+        covariance = ["none"] # Se o fitting falhar
     return optimized_params, covariance
 
 def simulate_spectra_conditional(foldername, filename):
