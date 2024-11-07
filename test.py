@@ -27,13 +27,26 @@
 
 import numpy as np
 
-# Arrays de exemplo
-temp = np.array([20, 30, 40, 50])
-y_real = np.array([3, 5, 2, 8])
-y_ajustado = np.array([2.5, 5.2, 1.8, 7.9])
+letters = np.array(["a", "b", "c"])
+test = [letters]
+n = np.array([1, 2, 3])
+s = np.array([4, 5, 6])
+test.append(n)
+test.append(s)
 
-np.savetxt("output_filename.txt", np.column_stack([temp, y_real, y_ajustado]), header='Wavenumber\tMinor Gaussian\tMajor Gaussian', comments='', delimiter='\t')
+# fs = 2
 
+# test[1].append(fs)
+print(np.column_stack(test))
+
+# # Arrays de exemplo
+# temp = np.array([20, 30, 40, 50])
+# y_real = np.array([3, 5, 2, 8])
+# y_ajustado = np.array([2.5, 5.2, 1.8, 7.9])
+
+# np.savetxt("output_filename.txt", np.column_stack([temp, y_real, y_ajustado]), header='Wavenumber\tMinor Gaussian\tMajor Gaussian', comments='', delimiter='\t')
+
+# print("eu gosto de", temp[0])
 
 # try:
 #     # Verificando se os conjuntos de dados têm o mesmo tamanho

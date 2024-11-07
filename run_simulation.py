@@ -11,8 +11,10 @@ def run_simulation(foldername, filename, params_filename):
     # Load parameters from file
     parameters = load_parameters(f"{foldername}/{params_filename}")
     
-    # Creat an array for simulated spectra data
-    all_simulated_spectra = [x]
+    # Initial arrays for data storage
+    all_simulated_spectra = [x] # Create an array for simulated spectra data
+    std_list = [] # Desvio padrão
+    r_2list = [] # R^2
 
     # Simulate spectrum for each temperature
     for i, y in enumerate(ys.T):
@@ -48,29 +50,20 @@ def run_simulation(foldername, filename, params_filename):
                 ss_res = np.sum((y - normalized_spectrum)**2) # soma do quadrado dos resíduos
                 y_mean = np.mean(y) # Achar y_médio da curva real
                 ss_tot = np.sum((y - y_mean)**2) # soma dos quadrados totais
-                r_sq = 1 - ss_res/ss_tot # Achar R^2        
+                r_sq = 1 - ss_res/ss_tot # Achar R^2
+                r_2list.append(r_sq) # Adiciona valor do R^2 à lista       
                 
                 # Calcular os valores de  desvio padrão
                 n = len(y) # achar tamanho do conjunto de dados (n)
                 std = np.sqrt(ss_res/n) # cálculo desvio padrão
+                std_list.append(std) # Adiciona valor do desvio padrão à lista       
 
         # Excessões:
         except ValueError as e:
             print(f"Erro: {e}")
         except Exception as e:
             print(f"Erro inesperado: {e}")
-
-        "SALVAR AS COVARIÂNCIAS EM UM ARQUIVO COM A PRIMEIRA COLUNA DA PRIMEIRA LINHA VAZIA, A PRIMEIRA LINHA COM O NOME DOS PARÂMETROS E A PRIMEIRA COLUNA TAMBÉM"
-        "NOME DO ARQUIVO: covariance_value_simulated_spectrum_at_{}"
-        headcol = np.array(["amplitude1", "peak center1", "fwhm1", "amplitude2", "peak center2", "fwhm2"])
-        output_filename = f"{foldername}/covariance_value_simulated_spectrum_at_{temperature}.txt"
-        np.savetxt(output_filename, np.column_stack((headcol, covariance)), header='\tamplitude1\tpeak center1\tfwhm1\tamplitude2\tpeak center2\tfwhm2', comments='', fmt='%s', delimiter='\t')
-
-        "SALVAR AS MÉTRICAS ESTATÍSTICAS EM UM ARRAY E ANEXAR EM UM 'ARRAY' COM LINHAS RELACIONADAS ÀS"
-        "TEMPERATURAS DA MEDIDA REFERENTE AO CONJUNTO DE DADOS USADO PARA O AJUSTE DA CURVA SIMULADA - PRECISA CRIAR O ARRAY INICIAL ANTES"
-        "SALVAR UM ARQUIVO EM QUE OS DADOS ESTATÍSTICOS DO ARRAY ANTERIOR ESTÃO EM CADA LINHA COM A TEMPERATURA COMO PRIMEIRA COLUNA, R^2 COMO SEGUNDA E"
-        "DESVIO PADRÃO COMO TERCEIRA EM QUE A PRIMEIRA LINHA SEJA UM CABEÇALHO COM O NOME DAS COLUNAS (VER ONDE ESSA PARTE DO CÓDIGO SE ENCAIXA)"
-
+        
         # Append spectrum in the dataset
         all_simulated_spectra.append(normalized_spectrum)
         
@@ -91,10 +84,22 @@ def run_simulation(foldername, filename, params_filename):
         output_filename = f"{foldername}/simulated_spectrum_{temperature}.txt"
         np.savetxt(output_filename, np.column_stack(gaussians), header='Wavenumber\tMinor Gaussian\tMajor Gaussian', comments='', delimiter='\t')
 
+        # Salvar os dados de covariância de cada simulação
+        headcol = np.array(["amplitude1", "peak center1", "fwhm1", "amplitude2", "peak center2", "fwhm2"]) # Coluna de parâmetros
+        output_filename = f"{foldername}/covariance_value_simulated_spectrum_at_{temperature}.txt"
+        np.savetxt(output_filename, np.column_stack((headcol, covariance)), header='\tamplitude1\tpeak center1\tfwhm1\tamplitude2\tpeak center2\tfwhm2', comments='', fmt='%s', delimiter='\t')
+
         # Save optimized parameters
         params_filename = f"{foldername}/optimized_params_{temperature}.txt"
         np.savetxt(params_filename, optimized_params.reshape(1, -1), header='Amplitude1\tCenter1\tFWHM1\tAmplitude2\tCenter2\tFWHM2', comments='', delimiter='\t')
         print(f"Finished simulation for {temperatures[i]}")
+
+    # Salvando os dados estatísticos de todas as simulações
+    stat_met = np.array([temperatures, r_2list, std_list]) # Create an array of statistical metrics and the temperature 
+    "SALVAR UM ARQUIVO EM QUE OS DADOS ESTATÍSTICOS DO ARRAY ANTERIOR ESTÃO EM CADA LINHA COM A TEMPERATURA COMO PRIMEIRA COLUNA, R^2 COMO SEGUNDA E"
+    "DESVIO PADRÃO COMO TERCEIRA EM QUE A PRIMEIRA LINHA SEJA UM CABEÇALHO COM O NOME DAS COLUNAS (VER ONDE ESSA PARTE DO CÓDIGO SE ENCAIXA)"
+    output_filename = f"{foldername}/all_simulated_spectra_statiscal_metrics.txt"
+    np.savetxt(output_filename, np.column_stack(stat_met), header='TEMPERATURE OF THE RUN\tR^2\tSTANDARD DEVIATION', comments='', fmt='%s', delimiter='\t')
 
     # Verificar se todos os espectros têm o mesmo tamanho
     all_simulated_spectra = np.array(all_simulated_spectra)
