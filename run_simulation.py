@@ -13,6 +13,7 @@ def run_simulation(foldername, filename, params_filename):
     
     # Initial arrays for data storage
     all_simulated_spectra = [x] # Create an array for simulated spectra data
+    all_simulated_spectra_normalizedpeak = [x] # Create an array for simulated spectra data
     std_list = [] # Desvio padrão
     r_2list = [] # R^2
 
@@ -41,11 +42,11 @@ def run_simulation(foldername, filename, params_filename):
         
         # Tentar fazer métricas estatísticas:
         try:
-            if len(y) != len(normalized_spectrum): # Confirmar que y_real e y_simulado
+            if len(y) != len(simulated_spectrum): # Confirmar que y_real e y_simulado
                 raise ValueError("Os conjuntos de dados não têm o mesmo tamanho!")
             else:
                 # Calcular os valores de  R^2
-                ss_res = np.sum((y - normalized_spectrum)**2) # soma do quadrado dos resíduos
+                ss_res = np.sum((y - simulated_spectrum)**2) # soma do quadrado dos resíduos
                 y_mean = np.mean(y) # Achar y_médio da curva real
                 ss_tot = np.sum((y - y_mean)**2) # soma dos quadrados totais
                 r_sq = 1 - ss_res/ss_tot # Achar R^2
@@ -63,7 +64,8 @@ def run_simulation(foldername, filename, params_filename):
             print(f"Erro inesperado: {e}")
         
         # Append spectrum in the dataset
-        all_simulated_spectra.append(normalized_spectrum)
+        all_simulated_spectra.append(simulated_spectrum)
+        all_simulated_spectra_normalizedpeak.append(normalized_spectrum)
         
         # Calculating gaussians with optimized parameters
         gaussians = [x]
@@ -79,7 +81,7 @@ def run_simulation(foldername, filename, params_filename):
 
         # Save gaussians
         gaussians = np.array(gaussians)
-        output_filename = f"{foldername}/simulated_spectrum_{temperature}.txt"
+        output_filename = f"{foldername}/normalized_simulated_spectrum_{temperature}.txt"
         np.savetxt(output_filename, np.column_stack(gaussians), header='Wavenumber\tMajor Gaussian\tMinor Gaussian', comments='', delimiter='\t')
 
         # Salvar os dados de covariância de cada simulação
@@ -103,9 +105,11 @@ def run_simulation(foldername, filename, params_filename):
     # Save results
     output_filename = f"{foldername}/simulated_spectrum.txt"
     np.savetxt(output_filename, np.column_stack(all_simulated_spectra), header='Wavenumber\t' + '\t'.join(temperatures).replace('C', '\u00B0C'), comments='', delimiter='\t')
+    output_filename2 = f"{foldername}/normalized_simulated_spectrum.txt"
+    np.savetxt(output_filename2, np.column_stack(all_simulated_spectra_normalizedpeak), header='Wavenumber\t' + '\t'.join(temperatures).replace('C', '\u00B0C'), comments='', delimiter='\t')
 
     # Load spectrum data
-    filename = f"{foldername}/simulated_spectrum.txt"
+    filename = f"{foldername}/normalized_simulated_spectrum.txt"
     temps, x, y = dataload(filename)
 
     # Calculando diferança entre os espectros

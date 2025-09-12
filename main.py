@@ -8,16 +8,8 @@ def main():
     outputfilename = "differential_spectra_original" # O nome do arquivo gerado contendo todas as diferenças entre os espectros normalizados da corrida (o mesmo nome em pastas differentes)
 
     # primeira corrida:
-    foldername = "firstrun"
-    filename = "original_spectranormalized.txt"
-    params_filename = "parameters.txt"
-    run_simulation(foldername, filename, params_filename) # fazer simulação dos espectros
-    difference(foldername, filename, outputfilename) # calcula diferença entre os espectros originais
-    simulate_spectra_conditional(foldername, filename) # simula os espectros condicionais (apenas variação do pico ou da largura de linha) e calcula diferença entre espectros para essas condições
-
-    # Segunda corrida:
-    foldername = "secondrun"
-    filename = "original_spectranormalized2ndrun.txt"
+    foldername = "C:/Users/admin/Documents/Alexandre Honorato/Mestrado/Projeto/DADOS/PROCDATA/Tratamento dos dados - novo/Second_Run-spec_dataXtemp"
+    filename = "Second_Run-spec_dataXtemp-original.txt"
     params_filename = "parameters.txt"
     run_simulation(foldername, filename, params_filename) # fazer simulação dos espectros
     difference(foldername, filename, outputfilename) # calcula diferença entre os espectros originais
