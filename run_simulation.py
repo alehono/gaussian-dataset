@@ -25,19 +25,16 @@ def run_simulation(foldername, filename, params_filename):
         temperature = temperatures[i] # A temperatura da amostra que foi medido o espectro
         
         print(f"Optimizing Parameters for {temperatures[i]}")
-        # Fit spectrum
+        # Otimização do espectro
         optimized_params, covariance = fit_spectrum(x, y, initial_params)
-        # optimized_params[1] = initial_params[1]
         print(f"Finished optimized parameters for {temperatures[i]}")
         
+        # Simulação do espectro com parâmetros otimizados
         print(f"Simulating spectrum for {temperatures[i]}")
-        # Simulate spectrum with optimized parameters
         simulated_spectrum = simulate_spectrum(x, optimized_params)
-
-        # Encontrando o pico
-        peak = np.max(simulated_spectrum)
         
         # Normalizando o espectro
+        peak = np.max(simulated_spectrum) # Encontrando o pico
         normalized_spectrum = simulated_spectrum / peak
         
         # Tentar fazer métricas estatísticas:
@@ -90,7 +87,7 @@ def run_simulation(foldername, filename, params_filename):
         np.savetxt(output_filename, np.column_stack((headcol, covariance)), header='\tamplitude1\tpeak center1\tfwhm1\tamplitude2\tpeak center2\tfwhm2', comments='', fmt='%s', delimiter='\t')
 
         # Save optimized parameters
-        params_filename = f"{foldername}/optimized_params_{temperature}.txt"
+        params_filename = f"{foldername}/{filename.replace('.txt', f'{temperature}-')}optimized_parameters.txt"
         np.savetxt(params_filename, optimized_params.reshape(1, -1), header='Amplitude1\tCenter1\tFWHM1\tAmplitude2\tCenter2\tFWHM2', comments='', delimiter='\t')
         print(f"Finished simulation for {temperatures[i]}")
 
@@ -103,13 +100,13 @@ def run_simulation(foldername, filename, params_filename):
     all_simulated_spectra = np.array(all_simulated_spectra)
 
     # Save results
-    output_filename = f"{foldername}/simulated_spectrum.txt"
+    output_filename = f"{foldername}/simulated_spectra.txt"
     np.savetxt(output_filename, np.column_stack(all_simulated_spectra), header='Wavenumber\t' + '\t'.join(temperatures).replace('C', '\u00B0C'), comments='', delimiter='\t')
-    output_filename2 = f"{foldername}/normalized_simulated_spectrum.txt"
+    output_filename2 = f"{foldername}/normalized_simulated_spectra.txt"
     np.savetxt(output_filename2, np.column_stack(all_simulated_spectra_normalizedpeak), header='Wavenumber\t' + '\t'.join(temperatures).replace('C', '\u00B0C'), comments='', delimiter='\t')
 
     # Load spectrum data
-    filename = f"{foldername}/normalized_simulated_spectrum.txt"
+    filename = f"{foldername}/normalized_simulated_spectra.txt"
     temps, x, y = dataload(filename)
 
     # Calculando diferança entre os espectros

@@ -33,7 +33,7 @@ def simulate_spectra_conditional(foldername, filename):
 
     # Ler o arquivo de parâmetros para o espectro a 20ºC:
     "Precisa de especificar o nome do arquivo (algo do tipo foldername/optimized_parameter_20C.txt)"
-    param20cfilename = f"{foldername}/optimized_params_20C.txt"
+    param20cfilename = f"{foldername}/{filename.replace('.txt', '20C-')}optimized_parameters.txt"
     par20c = load_opt_parameters(param20cfilename)
 
     # Lê arquivo de valores
@@ -50,7 +50,7 @@ def simulate_spectra_conditional(foldername, filename):
     for temp in temperatures:
         # Ler o arquivo de parâmetros para o outro espectro:
         "Para cada um vai ter 'foldername/optimized_parameter_{temp}.txt' diferente"
-        tempparamfilename = f"{foldername}/optimized_params_{temp}.txt"
+        tempparamfilename = f"{foldername}/{filename.replace('.txt', f'{temp}-')}optimized_parameters.txt"
         tempparam = load_opt_parameters(tempparamfilename)
 
         # Calcular o espectro da segunda temperatura apenas com o valor central do pico:
@@ -72,7 +72,7 @@ def simulate_spectra_conditional(foldername, filename):
         peakmax = np.max(fwhmchangespectrum) # Encontrando o máximo
         norm_fwhmchangespectrum = fwhmchangespectrum / peakmax # Normalizando a partir do máximo
         fwhmchangespectra.append(norm_fwhmchangespectrum)
-        fwhm = f"{peakshiftparams[2]}-{temp}"
+        fwhm = f"{fwhmchangeparams[2]}-{temp}"
         headerfwhm.append(fwhm)
     
     # Salvar resultados:
