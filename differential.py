@@ -48,6 +48,7 @@ def normspectra(foldername, filename, outputfilename):
         spectrum = ys[:, i]  # seleciona a i-ésima coluna (1175 pontos)
         peak = np.max(spectrum)
         print(f"Spectrum {i} peak: {peak}")
+        spectrum = spectrum - np.min(spectrum)
         normalized = spectrum / peak
         yn.append(normalized)
     yn = np.array(yn).T
